@@ -10,6 +10,39 @@ export interface ResponseOmdb {
   Response: string;
 }
 
+export interface FilmDetail {
+  Title: string;
+  Year: string;
+  Rated: string;
+  Released: string;
+  Runtime: string;
+  Genre: string;
+  Director: string;
+  Writer: string;
+  Actors: string;
+  Plot: string;
+  Language: string;
+  Country: string;
+  Awards: string;
+  Poster: string;
+  Ratings: [
+    {
+      Source: string;
+      Value: string;
+    }
+  ];
+  Metascore: string;
+  imdbRating: string;
+  imdbVotes: string;
+  imdbID: string;
+  Type: string;
+  DVD: string;
+  BoxOffice: string;
+  Production: string;
+  Website: string;
+  Response: string;
+}
+
 export interface ResponseFilms {
   search: Film[];
   totalResults: number;
@@ -82,5 +115,11 @@ export class FilmsService {
           response: response.Response === 'True',
         }))
       );
+  }
+
+  getFilmById(id: string): Observable<FilmDetail> {
+    return this.http.get<FilmDetail>(
+      `${environment.urlOmdbApi}?i=${id}&apikey=${environment.apiKeyOmdbApi}`
+    );
   }
 }

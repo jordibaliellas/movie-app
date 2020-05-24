@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FilmsService, Film } from '../../services/films.service';
+import { FilmsService, Film, FilmDetail } from '../../services/films.service';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-film-detail',
@@ -9,11 +9,14 @@ import { filter } from 'rxjs/operators';
   styleUrls: ['./film-detail.component.css'],
 })
 export class FilmDetailComponent implements OnInit {
-  film$: Observable<Film> = new Observable();
+  film$: Observable<FilmDetail> = new Observable();
 
   constructor(private filmsService: FilmsService) {}
 
   ngOnInit(): void {
-    this.film$ = this.filmsService.filmSelected$.pipe(filter((film) => !!film));
+    this.film$ = this.filmsService.filmSelected$.pipe(
+      filter((film) => !!film),
+      mergeMap((film) => this.filmsService.getFilmById(film.imdbID))
+    );
   }
 }
