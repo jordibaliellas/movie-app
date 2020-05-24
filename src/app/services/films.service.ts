@@ -34,38 +34,36 @@ export interface FavoriteSearch {
 })
 export class FilmsService {
   search$ = new BehaviorSubject<string>('');
-  listFilms$ = new BehaviorSubject<ResponseFilms>(undefined);
+  listFilms$: Observable<ResponseFilms>;
   favoritesSearch$ = new BehaviorSubject<FavoriteSearch[]>([]);
   filmSelected$ = new BehaviorSubject<Film>(undefined);
   canClickStar$ = new BehaviorSubject<boolean>(false);
   searchIsFavorite$ = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient) {
-    this.search$
-      .pipe(
-        debounceTime(200),
-        tap((search) => {
-          const favoritesSearch = this.favoritesSearch$.value;
-          const favoriteSearch = favoritesSearch.find(
-            (item) => item.search === search
-          );
+    this.listFilms$ = this.search$.pipe(
+      debounceTime(200),
+      tap((search) => {
+        const favoritesSearch = this.favoritesSearch$.value;
+        const favoriteSearch = favoritesSearch.find(
+          (item) => item.search === search
+        );
 
-          if (favoriteSearch) {
-            this.searchIsFavorite$.next(true);
-            favoriteSearch.counter++;
-            this.favoritesSearch$.next(favoritesSearch);
-          } else {
-            this.searchIsFavorite$.next(false);
-          }
-        }),
-        mergeMap((search) => this.getFilms(search))
-      )
-      .subscribe((result) => {
-        this.listFilms$.next(result);
+        if (favoriteSearch) {
+          this.searchIsFavorite$.next(true);
+          favoriteSearch.counter++;
+          this.favoritesSearch$.next(favoritesSearch);
+        } else {
+          this.searchIsFavorite$.next(false);
+        }
+      }),
+      mergeMap((search) => this.getFilms(search)),
+      tap((result) => {
         this.canClickStar$.next(
           result && result.response && result.totalResults > 0
         );
-      });
+      })
+    );
   }
 
   getFilms(search: string): Observable<ResponseFilms> {
