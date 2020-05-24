@@ -1,0 +1,14 @@
+<div>
+  <div class="title-card">
+    <span>Your 3 most favorite searches</span>
+  </div>
+  <div class="card-favorites">
+    <div
+      class="card-favorite"
+      *ngFor="let favoriteSearch of favoritesSearch$ | async; let idx = index"
+      (click)="clickFavoriteSearch(favoriteSearch)"
+    >
+      {{ favoriteSearch.search }} ({{ favoriteSearch.counter }})
+    </div>
+  </div>
+</div>

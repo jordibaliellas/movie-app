@@ -1,0 +1,16 @@
+<div>
+  <div class="title-card">
+    <b>Search results / films, series, etc</b>
+  </div>
+  <div class="card-result-films">
+    <div
+      class="film-item"
+      *ngFor="let film of (listFilms$ | async)?.search; let idx = index"
+      (click)="clickFilm(film)"
+    >
+      <span class="cursor-pointer" (click)="clickFilm(film)">
+        {{ film?.Title }}
+      </span>
+    </div>
+  </div>
+</div>

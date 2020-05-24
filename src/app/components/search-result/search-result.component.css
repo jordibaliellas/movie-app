@@ -1,0 +1,25 @@
+.film-item {
+  padding: 1rem;
+  display: flex;
+  height: calc(16.6666666667% - 2rem);
+  align-items: center;
+  background-color: #dad7d7;
+}
+
+.film-item:nth-child(odd) {
+  background-color: #f3f3f3;
+}
+
+.card-result-films {
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid #c5c5c5;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.title-card {
+  padding: 1rem 0rem;
+}

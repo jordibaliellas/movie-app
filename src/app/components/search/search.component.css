@@ -1,0 +1,29 @@
+.card-search {
+  border: 1px solid black;
+  display: flex;
+  justify-content: space-between;
+}
+
+.input-search {
+  border: none;
+  width: 100%;
+  padding: 0.5rem;
+}
+
+.input-search:focus {
+  outline: none;
+}
+
+.star {
+  padding: 0.5rem;
+  border-left: 1px solid black;
+  width: 1.5rem;
+}
+
+.icon-star {
+  fill: #f3d737;
+}
+
+.title-card {
+  padding: 1rem 0rem;
+}

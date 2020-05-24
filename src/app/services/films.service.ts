@@ -1,0 +1,88 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { debounceTime, mergeMap, filter, map, tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+
+export interface ResponseOmdb {
+  Search: Film[];
+  totalResults: string;
+  Response: string;
+}
+
+export interface ResponseFilms {
+  search: Film[];
+  totalResults: number;
+  response: boolean;
+}
+
+export interface Film {
+  Title: string;
+  Year: string;
+  imdbID: string;
+  Type: string;
+  Poster: string;
+}
+
+export interface FavoriteSearch {
+  search: string;
+  counter: number;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FilmsService {
+  search$ = new BehaviorSubject<string>('');
+  listFilms$ = new BehaviorSubject<ResponseFilms>(undefined);
+  favoritesSearch$ = new BehaviorSubject<FavoriteSearch[]>([]);
+  filmSelected$ = new BehaviorSubject<Film>(undefined);
+  canClickStar$ = new BehaviorSubject<boolean>(false);
+  searchIsFavorite$ = new BehaviorSubject<boolean>(false);
+
+  constructor(private http: HttpClient) {
+    this.search$
+      .pipe(
+        debounceTime(200),
+        tap((search) => {
+          const favoritesSearch = this.favoritesSearch$.value;
+          const favoriteSearch = favoritesSearch.find(
+            (item) => item.search === search
+          );
+
+          if (favoriteSearch) {
+            this.searchIsFavorite$.next(true);
+            favoriteSearch.counter++;
+            this.favoritesSearch$.next(favoritesSearch);
+          } else {
+            this.searchIsFavorite$.next(false);
+          }
+        }),
+        mergeMap((search) => this.getFilms(search))
+      )
+      .subscribe((result) => {
+        this.listFilms$.next(result);
+        this.canClickStar$.next(
+          result && result.response && result.totalResults > 0
+        );
+      });
+  }
+
+  getFilms(search: string): Observable<ResponseFilms> {
+    if (search.replace(/\s/g, '').length === 0) {
+      return of({ search: [], totalResults: 0, response: false });
+    }
+
+    return this.http
+      .get<ResponseOmdb>(
+        `${environment.urlOmdbApi}?s=${search}&apikey=${environment.apiKeyOmdbApi}`
+      )
+      .pipe(
+        map((response) => ({
+          search: response.Search,
+          totalResults: Number(response.totalResults),
+          response: response.Response === 'True',
+        }))
+      );
+  }
+}

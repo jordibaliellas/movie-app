@@ -1,0 +1,15 @@
+<div>
+  <div class="title-card">
+    <b>Film detail</b>
+  </div>
+  <div class="card-film">
+    <div class="picture-film">
+      <img [src]="(film$ | async)?.Poster" />
+    </div>
+    <div class="info-film" *ngIf="film$ | async as film">
+      <b>Title</b>: {{ film.Title }},&nbsp;<b>Year</b>:
+      {{ film.Year }},&nbsp;<b>Type</b>:
+      {{ film.Type }}
+    </div>
+  </div>
+</div>

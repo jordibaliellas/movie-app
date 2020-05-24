@@ -1,0 +1,10 @@
+.content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.content div {
+  width: calc(50% - 4rem);
+  padding: 2rem;
+}
